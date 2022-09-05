@@ -1,0 +1,19 @@
+kubectl create ns m 
+
+helm install nginx ingress-nginx/ingress-nginx --namespace m -f nginx-config.yaml
+
+kubectl create ns otus-hm2  
+
+helm install my-postgres --namespace otus-hm2 --set auth.username=robot,auth.database=my-db  -f values.yaml bitnami/postgresql
+
+cd charts
+
+helm upgrade --install userservice-release . --namespace otus-hm2 --set userservice.image.tag="v11" --set userservice.dbmigratorimage.tag="v0.0.4"
+
+cd ..
+
+newman run Otus-hm2.postman_collection-v7.json
+
+kubectl delete ns otus-hm2
+
+kubectl delete ns m
